@@ -105,7 +105,14 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
     }
 
     @Override
+    public String getCurrentUser() {
+        // Not used in File-based implementation
+        return null;
+    }
+
+    @Override
     public void setCurrentUser(String name) {
         // Not used in File-based implementation
+
     }
 }
