@@ -41,6 +41,38 @@ public class LoginInteractorTest {
         interactor.execute(inputData);
     }
 
+    @Test
+    public void successUserLoggedInTest() {
+        LoginInputData inputData = new LoginInputData("Paul", "password");
+        InMemoryUserDataAccessObject userRepository = new InMemoryUserDataAccessObject();
+
+        // 添加 Paul 到 DAO
+        UserFactory factory = new CommonUserFactory();
+        User user = factory.create("Paul", "password");
+        userRepository.save(user);
+
+        // 登录前，currentUser 应该是 null
+        assertNull(userRepository.getCurrentUser());
+
+        // 创建 Presenter
+        LoginOutputBoundary successPresenter = new LoginOutputBoundary() {
+            @Override
+            public void prepareSuccessView(LoginOutputData user) {
+                // 登录成功后，userRepository 应该记录 currentUser 是 "Paul"
+                assertEquals("Paul", userRepository.getCurrentUser());
+            }
+
+            @Override
+            public void prepareFailView(String error) {
+                fail("Use case failure is unexpected.");
+            }
+        };
+
+        // 执行登录用例
+        LoginInputBoundary interactor = new LoginInteractor(userRepository, successPresenter);
+        interactor.execute(inputData);
+    }
+
 
     @Test
     public void failurePasswordMismatchTest() {
